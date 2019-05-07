@@ -100,7 +100,10 @@ Shader "Unlit/Panner"
                 fixed4 col = tex2D(_MainTex, i.uv);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                col*=dissolve*mask;
+                col*=dissolve;
+                col+=mask;
+                col*=mask;
+                col = clamp(col, 0,1);
                 return col;
             }
             ENDCG
