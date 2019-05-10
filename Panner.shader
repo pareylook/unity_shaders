@@ -92,7 +92,7 @@ Shader "Unlit/Panner"
                 half mask = smoothstep(mintens*1-_MFade, mintens*1+_MFade, mtex);
 
                 //Dissolve Texture Time
-                fixed4 dtex = tex2D(_DissolveTex, i.uv2);
+                fixed4 dtex = tex2D(_DissolveTex, i.uv2)-mtex;
                 //fixed intens = frac(_Intesity * _Time);
                 fixed intens = _Intesity;
                 half dissolve = smoothstep(intens*1-_Fade, intens*1+_Fade, dtex);
@@ -100,9 +100,11 @@ Shader "Unlit/Panner"
                 fixed4 col = tex2D(_MainTex, i.uv);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
+                //dissolve-=mask;
                 col*=dissolve;
-                col+=mask;
-                col*=mask;
+                //col*=dissolve;
+                //col+=mask;
+                col*=(1-mask);
                 col = clamp(col, 0,1);
                 return col;
             }
