@@ -1,10 +1,9 @@
-Shader "Unlit/Panner"
+Shader "FX/Panner"
 {
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
-        [Space(50)] _MainTex ("Color Texture", 2D) = "white" {}
-
+        _MainTex ("Color Texture", 2D) = "white" {}
         _MaskTex ("Mask Texture", 2D) = "white" {}
         _MFade("Mask Fade", Range(0,1)) = 0.2
         _MIntesity("Mask Intesity", Float) = 1
@@ -16,24 +15,22 @@ Shader "Unlit/Panner"
         _Fade("Dissolve Fade", Range(0,1)) = 0.2
         _Intesity("Dissolve Intesity", Float) = 1
 
-        // Blend mode 
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("BlendSource", Float) = 1
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("BlendDestination", Float) = 0
-        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
-        [Toggle] _ZWrite ("ZWrite", Float) = 0
-        }
+      
+    }
     SubShader
     {
+        
         Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Opaque"}
         LOD 100
-        Blend [_SrcBlend] [_DstBlend]
-        ZWrite [_ZWrite]
-        //Blend [_Overlay]
-        //Blend SrcAlpha One //additive
+	    //Blend SrcAlpha One //additive
         //Blend SrcAlpha OneMinusSrcAlpha //stadart
         //Blend One OneMinusSrcAlpha //premult
-        //Cull Off
-		//ZWrite Off
+        Blend [_SrcBlend] [_DstBlend]
+        Cull Off
+		ZWrite Off
+
 
         Pass
         {
@@ -42,7 +39,6 @@ Shader "Unlit/Panner"
             #pragma fragment frag
             // make fog work
             #pragma multi_compile_fog
-            #pragma multi_compile 
 
             #include "UnityCG.cginc"
 
