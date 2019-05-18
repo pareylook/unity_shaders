@@ -12,9 +12,11 @@ Shader "Custom/ParticlesUnlitDissolveAlpha"
     {
         Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Opaque"}
         LOD 100
-	    Blend SrcAlpha One
+	//Blend SrcAlpha One
+        Blend SrcAlpha OneMinusSrcAlpha
+        //Blend One OneMinusSrcAlpha
 
-		ZWrite Off
+	ZWrite Off
 
         Pass
         {
