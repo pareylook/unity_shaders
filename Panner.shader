@@ -1,4 +1,4 @@
-Shader "FX/Panner"
+Shader "Unlit/Panner"
 {
     Properties
     {
@@ -14,23 +14,16 @@ Shader "FX/Panner"
         _SpeedVd("Dissolve SpeedV", Float) = 1
         _Fade("Dissolve Fade", Range(0,1)) = 0.2
         _Intesity("Dissolve Intesity", Float) = 1
-
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("BlendSource", Float) = 1
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("BlendDestination", Float) = 0
-      
+        _DIntesity("Dissolve Second Intesity", Float) = 1
     }
     SubShader
     {
-        
         Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Opaque"}
         LOD 100
-	    //Blend SrcAlpha One //additive
-        //Blend SrcAlpha OneMinusSrcAlpha //stadart
-        //Blend One OneMinusSrcAlpha //premult
-        Blend [_SrcBlend] [_DstBlend]
-        Cull Off
-		ZWrite Off
+	    Blend SrcAlpha One
+        //Blend SrcAlpha OneMinusSrcAlpha
 
+		ZWrite Off
 
         Pass
         {
@@ -65,6 +58,7 @@ Shader "FX/Panner"
             float4 _MainTex_ST;
             float4 _MaskTex_ST;
             float4 _DissolveTex_ST;
+            float4 _Color;
             fixed _SpeedU;
             fixed _SpeedV;
             fixed _SpeedUd;
@@ -73,7 +67,7 @@ Shader "FX/Panner"
             fixed _Intesity;
             fixed _MFade;
             fixed _MIntesity;
-            fixed4 _Color;
+            fixed _DIntesity;
 
             v2f vert (appdata v)
             {
@@ -102,22 +96,21 @@ Shader "FX/Panner"
                 half mask = smoothstep(mintens*1-_MFade, mintens*1+_MFade, mtex);
 
                 //Dissolve Texture Time
-                fixed4 dtex = tex2D(_DissolveTex, i.uv2)-mtex;
+                fixed4 dtex = tex2D(_DissolveTex, i.uv2);
                 //fixed intens = frac(_Intesity * _Time);
                 fixed intens = _Intesity;
                 half dissolve = smoothstep(intens*1-_Fade, intens*1+_Fade, dtex);
+                half truediss = dissolve;
                 // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                fixed4 ctex = tex2D(_MainTex, i.uv);
+                fixed4 col = tex2D(_MainTex, i.uv)*_Color;
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                dissolve-=mask;
+                
+                dissolve+=mask;
+                dissolve*=mask;
                 col*=dissolve;
-                //col+=mask;
-                col*=(1-mask)*_Color;
-                col*=ctex.z;
+                col*=truediss*_DIntesity;
                 col = clamp(col, 0,1);
-
                 return col;
             }
             ENDCG
