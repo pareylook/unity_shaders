@@ -46,8 +46,12 @@ Shader "Custom/SHADER_SHIELD"
         fixed4 _PointColor;
         fixed4 _PointColor2;
         int _PointsSize;
-        fixed3 _Points;
-        float _TimeImpact;
+        fixed3 _Point0;
+		fixed3 _Point1;
+		fixed3 _Point2;
+        float _TimeImpact0;
+		float _TimeImpact1;
+		float _TimeImpact2;
 
         fixed _Fade;
         fixed _Intesity;
@@ -63,10 +67,27 @@ Shader "Custom/SHADER_SHIELD"
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             half size = 0;
-            fixed emissive = 0;
-            fixed emissive2 = 0;
-            emissive += frac(1 - max(0, ((((_Time.y - _TimeImpact) / 0.6)) - (distance(_Points.xyz, IN.worldPos) * 0.5) ) ) );
-            emissive2 += max(0, (1 - (distance(_Points.xyz, IN.worldPos) * 0.2) ) );
+            fixed p0_emissive = 0;
+            fixed p0_emissive2 = 0;
+			fixed p1_emissive = 0;
+			fixed p1_emissive2 = 0;
+			fixed p2_emissive = 0;
+			fixed p2_emissive2 = 0;
+
+
+
+            p0_emissive += frac(1 - max(0, ((((_Time.y - _TimeImpact0) / 0.6)) - (distance(_Point0.xyz, IN.worldPos) * 0.5) ) ) ) * max(0, (1 - ((_Time.y - _TimeImpact0) / 0.6)));
+            p0_emissive2 += max(0, (1 - (distance(_Point0.xyz, IN.worldPos) * 0.2) ) ) * max(0, (1 - ((_Time.y - _TimeImpact0) / 0.6)));
+
+			p1_emissive += frac(1 - max(0, ((((_Time.y - _TimeImpact1) / 0.6)) - (distance(_Point1.xyz, IN.worldPos) * 0.5)))) * max(0, (1 - ((_Time.y - _TimeImpact1) / 0.6)));
+			p1_emissive2 += max(0, (1 - (distance(_Point1.xyz, IN.worldPos) * 0.2))) * max(0, (1 - ((_Time.y - _TimeImpact1) / 0.6)));
+
+			p2_emissive += frac(1 - max(0, ((((_Time.y - _TimeImpact2) / 0.6)) - (distance(_Point2.xyz, IN.worldPos) * 0.5)))) * max(0, (1 - ((_Time.y - _TimeImpact2) / 0.6)));
+			p2_emissive2 += max(0, (1 - (distance(_Point2.xyz, IN.worldPos) * 0.2))) * max(0, (1 - ((_Time.y - _TimeImpact2) / 0.6)));
+
+
+
+
             // Albedo comes from a texture tinted by color
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             fixed4 alpha = tex2D (_AlphaTex, IN.uv_AlphaTex);
@@ -76,8 +97,9 @@ Shader "Custom/SHADER_SHIELD"
             half a_mask = smoothstep(mintens*1-_Fade, mintens*1+_Fade, alpha);
             half main_mask = smoothstep(_MaskIntesity*1-_Fade, _MaskIntesity*1+_Fade, mask_tex.r);
             o.Albedo = c.rgb;
-            o.Emission = (emissive2 * _PointColor2) * max(0,(1-((_Time.y - _TimeImpact) / 0.6))) + (a_mask * c.a ) +
-             (emissive * _PointColor) * max(0,(1-((_Time.y - _TimeImpact) / 0.6))) + (a_mask * c.a ) * _Color;
+            o.Emission = ((p0_emissive2 * _PointColor2) + (a_mask * c.a ) + (p0_emissive * _PointColor) + (a_mask * c.a ) * _Color) + 
+						 ((p1_emissive2 * _PointColor2) + (a_mask * c.a) + (p1_emissive * _PointColor) + (a_mask * c.a) * _Color) + 
+						 ((p2_emissive2 * _PointColor2) + (a_mask * c.a) + (p2_emissive * _PointColor) + (a_mask * c.a) * _Color);
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
