@@ -109,7 +109,7 @@ Shader "Unlit/Panner"
                 //col+=mask;
                 col*=(1-mask)*_Color;
                 col*=ctex.z;
-                //col = clamp(col, 0,1);
+                col = clamp(col, 0,1);
 
                 return col;
             }
