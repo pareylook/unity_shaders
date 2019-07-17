@@ -74,8 +74,6 @@ Shader "Custom/SHADER_SHIELD"
 			fixed p2_emissive = 0;
 			fixed p2_emissive2 = 0;
 
-
-
             p0_emissive += frac(1 - max(0, ((((_Time.y - _TimeImpact0) / 0.6)) - (distance(_Point0.xyz, IN.worldPos) * 0.5) ) ) ) * max(0, (1 - ((_Time.y - _TimeImpact0) / 0.6)));
             p0_emissive2 += max(0, (1 - (distance(_Point0.xyz, IN.worldPos) * 0.2) ) ) * max(0, (1 - ((_Time.y - _TimeImpact0) / 0.6)));
 
