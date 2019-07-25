@@ -1,4 +1,4 @@
-Shader "CTD/FakeBRDF"
+Shader "BRDF/FakeBRDF"
 {
     Properties
     {
@@ -14,7 +14,7 @@ Shader "CTD/FakeBRDF"
 
         CGPROGRAM     
         #pragma surface surf Ramp
-        #pragma target 3.0
+        // #pragma target 3.0
 
         // Use shader model 3.0 target, to get nicer looking lighting
 
@@ -27,7 +27,6 @@ Shader "CTD/FakeBRDF"
 
         fixed4 _Color;
         half _FadeShadow;
-        half _BrightnesShadow;
         half _Atten;
 
         half4 LightingRamp (SurfaceOutput s, half3 lightDir, half3  viewDir, half atten)
@@ -36,9 +35,6 @@ Shader "CTD/FakeBRDF"
             NdotL = NdotL * 0.5 + 0.5;
             fixed NdotV = dot(s.Normal, viewDir);
 
-
-            float diff = NdotL * _FadeShadow + _BrightnesShadow;
-            float2 brdfUV = float2(NdotV, diff);
             float3 BRDF = tex2D(_MainTex, float2(NdotV, NdotL)).rgb;
 
             float4 c;
@@ -56,5 +52,5 @@ Shader "CTD/FakeBRDF"
         }
         ENDCG
     }
-    // FallBack "Diffuse"
+    FallBack "Diffuse"
 }
