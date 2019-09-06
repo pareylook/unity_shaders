@@ -1,4 +1,4 @@
-Shader "Colored Diffuse" {
+Shader "Colored Self Shadow" {
 Properties {
 	_DiffuseVal ("Diffuse Val", Range(0,1)) = 1
 	_ShadowColor ("Main Color", Color) = (1,1,1,1)
