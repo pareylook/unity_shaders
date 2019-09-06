@@ -1,10 +1,13 @@
-Shader "Colored Self Shadow" {
-Properties {
+Shader "Colored Self Shadow" 
+{
+Properties 
+{
 	_DiffuseVal ("Diffuse Val", Range(0,1)) = 1
 	_ShadowColor ("Main Color", Color) = (1,1,1,1)
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 }
-SubShader {
+SubShader 
+{
 	Tags { "RenderType"="Opaque" }
 	LOD 200
 
@@ -14,7 +17,8 @@ sampler2D _MainTex;
 float _DiffuseVal;
 float4 _ShadowColor;
 
-struct Input {
+struct Input 
+{
 	float2 uv_MainTex;
 };
 
@@ -31,7 +35,8 @@ half4 LightingCSLambert (SurfaceOutput s, half3 lightDir, half atten)
 	return c;
 }
 
-void surf (Input IN, inout SurfaceOutput o) {
+void surf (Input IN, inout SurfaceOutput o) 
+{
 	half4 c = tex2D (_MainTex, IN.uv_MainTex);
 	o.Albedo = c.rgb;
 	o.Alpha = c.a;
